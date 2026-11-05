@@ -2,7 +2,8 @@
 
 一个为陈一发儿发友定制的匿名音乐馆。中文优先、无需登录、打开就能听；接入已有的 Navidrome 曲库，支持在线播放、一键下载、歌单本地备份与 6 位同步码分享。
 
-仓库：[wangdaniel2022/cyf-fan-radio](https://github.com/wangdaniel2022/cyf-fan-radio)
+仓库：[wangdaniel2022/cyf-fan-radio](https://github.com/wangdaniel2022/cyf-fan-radio)  
+线上：[cyf-fan-radio.pages.dev](https://cyf-fan-radio.pages.dev)
 
 ![首页预览](docs/preview.jpg)
 
@@ -135,6 +136,8 @@ npx wrangler pages deploy . --project-name cyf-fan-radio
 - KV 免费额度对“分享歌单”这种低频写入足够；代码把每个 IP 每天创建分享限制为 12 次。
 - 音频 Range 请求会按需代理，不整段缓存，避免占满 KV。
 - 分享歌单默认保留 **90 天**；KV 的 TTL 到期自动清理。
+- 社区列表基于 KV `list`，新分享在边缘节点可能有几十秒的可见延迟，属正常现象；直接输入同步码不受影响。
+- **不需要 R2**。音频与封面由 Pages Functions 实时代理 Navidrome；R2 凭证与本站无关，不需要配置，也不应提交到仓库。
 
 ## API 一览
 

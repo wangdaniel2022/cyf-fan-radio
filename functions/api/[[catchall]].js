@@ -609,7 +609,7 @@ async function handleCommunity(env) {
   return json({
     enabled: true,
     playlists: items.filter(Boolean).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))),
-  }, 200, { "cache-control": "public, max-age=60" });
+  }, 200, { "cache-control": "no-store" });
 }
 
 function sanitizePlaylist(input) {
