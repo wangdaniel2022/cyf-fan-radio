@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# 非官方粉丝站点。音乐与照片版权归陈一发儿及原权利人所有。

@@ -1,0 +1,15 @@
+# 复制为 wrangler.toml 后使用 Wrangler CLI 部署。
+# 使用 Cloudflare Dashboard 的 Git 集成时，不需要这个文件；
+# 只需在 Pages 项目里添加环境变量与 KV 绑定。
+name = "cyf-fan-radio"
+compatibility_date = "2026-01-01"
+pages_build_output_dir = "."
+
+# 在 Cloudflare Dashboard -> Workers & Pages -> KV 创建命名空间，
+# 把 id 填到这里，或在 Pages 项目的 Settings -> Bindings 中绑定。
+# [[kv_namespaces]]
+# binding = "PLAYLIST_KV"
+# id = "replace-with-your-kv-namespace-id"
+
+# 不要把 ND_USER / ND_PASS 写进仓库。
+# 本地开发写入 .dev.vars；线上在 Pages 环境变量里加密保存。

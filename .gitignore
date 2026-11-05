@@ -1,0 +1,15 @@
+# secrets
+.dev.vars
+.dev.vars.*
+.env
+.env.*
+!.dev.vars.example
+
+# local data
+.dev-kv.json
+.preview/
+.wrangler/
+node_modules/
+.DS_Store
+Thumbs.db
+*.log

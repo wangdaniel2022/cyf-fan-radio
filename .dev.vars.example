@@ -1,0 +1,5 @@
+# 复制为 .dev.vars 后填写。该文件不会提交到 Git。
+# Cloudflare Pages 部署时，请在项目 Settings -> Environment variables 中设置同名变量。
+ND_BASE=https://music.xn--4gqy2fnwcsx7i.top
+ND_USER=your-navidrome-user
+ND_PASS=your-navidrome-password
