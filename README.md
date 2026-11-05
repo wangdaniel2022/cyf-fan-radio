@@ -2,6 +2,8 @@
 
 一个为陈一发儿发友定制的匿名音乐馆。中文优先、无需登录、打开就能听；接入已有的 Navidrome 曲库，支持在线播放、一键下载、歌单本地备份与 6 位同步码分享。
 
+仓库：[wangdaniel2022/cyf-fan-radio](https://github.com/wangdaniel2022/cyf-fan-radio)
+
 ![首页预览](docs/preview.jpg)
 
 ![移动端预览](docs/preview-mobile.jpg)

@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "description": "陈一发儿 · 发友留声机：匿名、中文优先的粉丝音乐馆，Cloudflare Pages + Navidrome。",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wangdaniel2022/cyf-fan-radio.git"
+  },
   "scripts": {
     "dev": "node scripts/dev-server.mjs",
     "check": "node --check assets/js/app.js && node --check assets/js/views.js && node --check assets/js/player.js && node --check assets/js/store.js && node --check assets/js/ui.js && node --check assets/js/api.js && node --check assets/js/data.js && node --check assets/js/utils.js && node --check 'functions/api/[[catchall]].js'",
