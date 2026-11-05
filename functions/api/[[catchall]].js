@@ -206,7 +206,16 @@ function normalizeArtist(artist) {
 /* Home                                                               */
 /* ------------------------------------------------------------------ */
 
+const ARTIST_IDS = [
+  "7yfP0IcpGCyV4x9UXURctf", // 陈一发儿（简体归档）
+  "1Hzv657YXvoAWycVswzpW3", // 陳一發兒（繁体直播归档，含 2024–2026）
+];
+const ARTIST_NAMES = ["陈一发儿", "陳一發兒"];
+
 const FEATURED_NAMES = [
+  "2026直播歌曲集",
+  "2025直播歌曲集",
+  "2024直播歌曲集",
   "童话镇",
   "阿婆说",
   "弦上有春秋",
@@ -220,6 +229,35 @@ const FEATURED_NAMES = [
 const MEMORY_CACHE = new Map();
 const MEMORY_CACHE_TTL = 10 * 60 * 1000;
 
+async function fetchMergedArtist(env) {
+  const bodies = await Promise.all(
+    ARTIST_IDS.map((id) => nd(env, "getArtist", { id }).catch(() => null))
+  );
+  const rawArtists = bodies.map((body) => body?.artist).filter(Boolean);
+  if (!rawArtists.length) throw new Error("找不到陈一发儿的音乐档案");
+
+  const primary = normalizeArtist(rawArtists[0]);
+  const albumMap = new Map();
+  rawArtists.forEach((artist) => {
+    ensureArray(artist.album).forEach((album) => {
+      if (album?.id && !albumMap.has(album.id)) albumMap.set(album.id, album);
+    });
+  });
+
+  const albums = [...albumMap.values()].map(normalizeAlbum).filter(Boolean);
+  const songCount = albums.reduce((sum, album) => sum + album.songCount, 0);
+  const duration = albums.reduce((sum, album) => sum + album.duration, 0);
+
+  return {
+    ...primary,
+    albumCount: albums.length,
+    songCount,
+    duration,
+    hours: Math.round(duration / 360) / 10,
+    albums,
+  };
+}
+
 async function handleHome(request, env) {
   const cfg = getConfig(env);
   if (!cfg.user || !cfg.pass) {
@@ -230,28 +268,21 @@ async function handleHome(request, env) {
     }, 503);
   }
 
-  const cacheKey = new Request(new URL("/api/home?v=4", request.url), { method: "GET" });
+  const cacheKey = new Request(new URL("/api/home?v=5", request.url), { method: "GET" });
   const cached = await cacheMatch(cacheKey);
   if (cached) return cached;
 
-  const artistBody = await nd(env, "getArtist", { id: "7yfP0IcpGCyV4x9UXURctf" });
-  const artist = normalizeArtist(artistBody.artist || {});
-  if (!artist.albums.length) {
-    // 若账号更换，退回到按名字查找
-    const found = await nd(env, "search3", { query: "陈一发儿", artistCount: 1, albumCount: 0, songCount: 0 });
-    const foundArtist = found.searchResult3?.artist?.[0];
-    if (foundArtist) {
-      const alt = await nd(env, "getArtist", { id: foundArtist.id });
-      Object.assign(artist, normalizeArtist(alt.artist || {}));
-    }
-  }
+  const [artist, ...topResults] = await Promise.all([
+    fetchMergedArtist(env),
+    ...ARTIST_NAMES.map((name) => nd(env, "getTopSongs", { artist: name, count: 30 }).catch(() => null)),
+  ]);
+  const topSongs = dedupeSongs(
+    topResults.flatMap((body) => ensureArray(body?.topSongs?.song).map(normalizeSong).filter(Boolean))
+  ).sort((a, b) => b.playCount - a.playCount);
 
-  const topBody = await nd(env, "getTopSongs", { artist: artist.name, count: 30 });
-  const topSongs = ensureArray(topBody.topSongs?.song).map(normalizeSong).filter(Boolean);
-
-  // Keep the home request to two fast Navidrome calls. Signature moments are
-  // already represented in the play-count list; the album shelf links to the full archive.
-  const songs = dedupeSongs(topSongs);
+  // Both simplified and traditional artist archives feed the same shelf, so
+  // 2024–2026 live recordings are not lost behind an artist-name split.
+  const songs = topSongs;
   const featured = chooseFeatured(artist.albums);
   const eras = buildEras(artist.albums);
   const heroSong = songs.find((song) => song.title.includes("童话镇")) || songs[0] || null;
@@ -331,8 +362,7 @@ function dedupeSongs(songs) {
 /* ------------------------------------------------------------------ */
 
 async function handleAlbums(request, env) {
-  const artistBody = await nd(env, "getArtist", { id: "7yfP0IcpGCyV4x9UXURctf" });
-  const artist = normalizeArtist(artistBody.artist || {});
+  const artist = await fetchMergedArtist(env);
   const albums = [...artist.albums].sort((a, b) => b.year - a.year || b.playCount - a.playCount);
 
   return json({

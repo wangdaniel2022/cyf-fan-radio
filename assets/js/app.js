@@ -106,7 +106,7 @@ async function renderRoute({ preserveScroll = false, replace = false } = {}) {
       afterRender({ home: true });
       setPageTitle("陈一发儿 · 发友留声机");
       setMeta("og:title", "陈一发儿 · 发友留声机");
-      setMeta("og:description", "把喜欢唱成岁月。发友专属的匿名音乐馆，收录 10,000+ 首歌与十年直播记忆。");
+      setMeta("og:description", "把喜欢唱成岁月。发友专属的匿名音乐馆，收录 10,000+ 首歌与十余年直播记忆。");
       return;
     }
 
@@ -191,7 +191,7 @@ async function renderRoute({ preserveScroll = false, replace = false } = {}) {
     }
 
     if (route.name === "about") {
-      let stats = app.home?.stats || { albums: 82, songs: 10002, hours: 1594 };
+      let stats = app.home?.stats || { albums: 95, songs: 11907, hours: 1720 };
       view.innerHTML = aboutView({ stats });
       afterRender();
       setPageTitle("关于本站 · 陈一发儿留声机");

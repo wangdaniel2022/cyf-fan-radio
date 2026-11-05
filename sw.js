@@ -1,6 +1,6 @@
 /* Offline shell only. Music and API responses always go to the network. */
 
-const VERSION = "cyf-radio-v1.0.0";
+const VERSION = "cyf-radio-v1.1.0";
 const SHELL = [
   "/",
   "/index.html",
@@ -23,7 +23,12 @@ const SHELL = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(VERSION).then((cache) => Promise.allSettled(SHELL.map((path) => cache.add(path)))).then(() => self.skipWaiting())
+    caches.open(VERSION).then((cache) => Promise.allSettled(SHELL.map(async (path) => {
+      // Bypass the HTTP cache when refreshing the shell, otherwise a stale
+      // 7-day-cached module can survive a deployment.
+      const response = await fetch(path, { cache: "reload" });
+      if (response.ok) await cache.put(path, response);
+    }))).then(() => self.skipWaiting())
   );
 });
 

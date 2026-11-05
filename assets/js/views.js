@@ -146,7 +146,7 @@ export function homeView(data, state) {
           <div class="hero-stat"><dt>${artist.albumCount}</dt><dd>张唱片</dd></div>
           <div class="hero-stat"><dt>${artist.songCount.toLocaleString("zh-CN")}</dt><dd>首声音存档</dd></div>
           <div class="hero-stat"><dt>${Math.round(artist.hours).toLocaleString("zh-CN")}</dt><dd>小时陪伴</dd></div>
-          <div class="hero-stat"><dt>2015—2025</dt><dd>十年一刻</dd></div>
+          <div class="hero-stat"><dt>2015—2026</dt><dd>十一年一刻</dd></div>
         </dl>
       </div>
 
@@ -254,8 +254,8 @@ export function homeView(data, state) {
       <div class="shell">
         <div class="era-band reveal">
           <div class="era-copy">
-            <span class="kicker">2015 — 2025 · 十年一刻</span>
-            <h2>十年，<br><em>一万首歌。</em></h2>
+            <span class="kicker">2015 — 2026 · 十一年一刻</span>
+            <h2>十一年，<br><em>一万首歌。</em></h2>
             <p>从第一场直播，到茶话会、生日歌会、跨年夜晚。时间把声音留了下来，也把听歌的人留在了这里。</p>
           </div>
           <div class="era-years">
@@ -757,9 +757,9 @@ export function aboutView(data) {
               <p>本站由发友自制，非官方，不收费，不投放广告，不收集个人信息。音乐版权归陈一发儿及原权利人所有，请支持正版。</p>
             </div>
             <div class="about-facts">
-              <div class="about-fact"><b>${data?.stats?.albums || 82}</b><span>张唱片</span></div>
-              <div class="about-fact"><b>${(data?.stats?.songs || 10002).toLocaleString("zh-CN")}</b><span>首声音存档</span></div>
-              <div class="about-fact"><b>${Math.round(data?.stats?.hours || 1593).toLocaleString("zh-CN")}</b><span>小时陪伴</span></div>
+              <div class="about-fact"><b>${data?.stats?.albums || 95}</b><span>张唱片</span></div>
+              <div class="about-fact"><b>${(data?.stats?.songs || 11907).toLocaleString("zh-CN")}</b><span>首声音存档</span></div>
+              <div class="about-fact"><b>${Math.round(data?.stats?.hours || 1720).toLocaleString("zh-CN")}</b><span>小时陪伴</span></div>
               <div class="about-fact"><b>0</b><span>个需要填写的登录框</span></div>
             </div>
           </div>
