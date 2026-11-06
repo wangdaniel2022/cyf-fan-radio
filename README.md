@@ -3,7 +3,7 @@
 一个为陈一发儿发友定制的匿名音乐馆。中文优先、无需登录、打开就能听；接入已有的 Navidrome 曲库，支持在线播放、一键下载、歌单本地备份与 6 位同步码分享。
 
 仓库：[wangdaniel2022/cyf-fan-radio](https://github.com/wangdaniel2022/cyf-fan-radio)  
-线上：[cyf-fan-radio.pages.dev](https://cyf-fan-radio.pages.dev)
+线上：[radio.zddyz.org](https://radio.zddyz.org/)
 
 ![首页预览](docs/preview.jpg)
 
@@ -21,6 +21,7 @@
 - **歌单备份**：导出 / 导入 JSON，换浏览器或换设备时把收藏带走。
 - **歌单同步**：生成 6 位同步码，发友不用登录就能打开、试听并保存一份；支持版本冲突提示。
 - **发友广场**：最近分享的歌单会出现在广场，形成轻量的同好互动。
+- **相关信息**：开播通知、直播回放、微信小程序与飞牛音乐手机端登录教程，都收在「关于」页。
 - **Cloudflare 免费部署**：静态页面 + Pages Functions，凭据只放服务端；KV 只存分享歌单。
 
 ## 关于 2024–2026 的直播歌曲集

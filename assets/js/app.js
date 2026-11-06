@@ -34,6 +34,7 @@ import {
   sharedView,
 } from "./views.js";
 import {
+  copyText,
   downloadBlob,
   esc,
   icon,
@@ -738,6 +739,23 @@ async function handleAction(action, node, event) {
       app.community = null;
       renderRoute();
       break;
+    case "copy-text": {
+      const text = node.dataset.copy || "";
+      const ok = await copyText(text);
+      toast(ok ? `已复制「${text}」` : "复制失败，请手动选择");
+      break;
+    }
+    case "toggle-secret": {
+      const value = node.closest(".login-row")?.querySelector("[data-secret]");
+      if (!value) break;
+      const nowMasked = value.dataset.masked !== "true";
+      value.dataset.masked = String(nowMasked);
+      value.textContent = nowMasked ? "••••••••" : value.dataset.value;
+      node.classList.toggle("is-masked", nowMasked);
+      node.setAttribute("aria-label", nowMasked ? "显示密码" : "隐藏密码");
+      node.querySelector("use")?.setAttribute("href", nowMasked ? "#i-eye" : "#i-eye-off");
+      break;
+    }
     case "scroll-to": {
       document.querySelector(node.dataset.target)?.scrollIntoView({ behavior: "smooth" });
       break;

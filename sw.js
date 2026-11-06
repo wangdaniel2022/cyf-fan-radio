@@ -1,6 +1,6 @@
 /* Offline shell only. Music and API responses always go to the network. */
 
-const VERSION = "cyf-radio-v1.1.0";
+const VERSION = "cyf-radio-v1.2.0";
 const SHELL = [
   "/",
   "/index.html",

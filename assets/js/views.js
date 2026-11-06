@@ -772,11 +772,167 @@ export function aboutView(data) {
               <li><b>云端同步</b>生成 6 位同步码，发友不用登录就能打开你的歌单。</li>
             </ol>
             <a class="btn btn-sm btn-cream" href="/" data-link>${icon("play")} 回去听歌</a>
+            <a class="about-jump" href="#info">${icon("arrow-down")} 开播通知与回放</a>
             <p style="margin-top:16px;color:var(--muted-2);font-family:var(--font-mono);font-size:8px;line-height:1.8">POWERED BY NAVIDROME · CLOUDFLARE PAGES<br>UNOFFICIAL FAN PROJECT · 2026</p>
           </aside>
         </div>
+        ${infoHubView()}
       </div>
     </div>
+  `;
+}
+
+/* 相关信息：开播通知 / 回放 / 小程序 / 手机客户端 */
+function infoHubView() {
+  const replayLinks = [
+    { tag: "官方", name: "官方回放", host: "67373.net/streams", href: "https://67373.net/streams/", official: true },
+    { tag: "非官方", name: "茶话会", host: "chatcyf.com/teaparty", href: "https://www.chatcyf.com/teaparty/" },
+    { tag: "非官方", name: "镜像站", host: "陈一发儿.top", href: "http://xn--4gqy2fnwcsx7i.top/" },
+    { tag: "网盘", name: "夸克网盘", host: "pan.quark.cn", href: "https://pan.quark.cn/s/dacb06e974c9" },
+    { tag: "PT", name: "67373 PT", host: "67373pt.com", href: "https://www.67373pt.com/" },
+  ];
+
+  return `
+    <section class="info-hub" id="info" aria-labelledby="info-title">
+      <div class="info-hub-head">
+        <div class="info-hub-copy">
+          <span class="kicker">STAY IN TOUCH · 相关信息</span>
+          <h2 class="section-title" id="info-title">开播有通知，<br>散场有<em>回放</em>。</h2>
+          <p class="section-lead">直播不常有，所以把能找到她的地方都收在这里：开播通知、直播回放、微信小程序，还有手机端的听歌方式。</p>
+        </div>
+        <div class="info-stamp" aria-hidden="true">
+          <span>FAN CHANNELS</span>
+          <b>04</b>
+          <small>个入口</small>
+        </div>
+      </div>
+
+      <div class="info-hub-grid">
+        <article class="info-card info-card-live reveal">
+          <header class="info-card-head">
+            <span class="info-no">— 01</span>
+            <span class="info-mark">${icon("radio")}</span>
+          </header>
+          <h3>开播通知</h3>
+          <p class="info-desc">开播前群里会喊一声。Telegram 与 QQ，挑常用的一个加上就好。</p>
+          <div class="info-signal" aria-hidden="true">
+            <span class="info-signal-bars"><i></i><i></i><i></i><i></i><i></i></span>
+            <small>STANDBY · 等一场开播</small>
+          </div>
+          <div class="info-rows">
+            <a class="info-row" href="https://t.me/FaFa67373" target="_blank" rel="noreferrer">
+              <span class="info-row-icon">${icon("telegram")}</span>
+              <span class="info-row-copy"><b>Telegram 群</b><small>@FaFa67373</small></span>
+              <span class="info-row-go">${icon("arrow-up-right")}</span>
+            </a>
+            <div class="info-row">
+              <span class="info-row-icon">${icon("qq")}</span>
+              <span class="info-row-copy"><b>QQ 群</b><small>606797995</small></span>
+              <button class="info-copy" data-action="copy-text" data-copy="606797995" aria-label="复制 QQ 群号">${icon("copy")}<span>复制</span></button>
+            </div>
+          </div>
+        </article>
+
+        <article class="info-card info-card-replay reveal">
+          <header class="info-card-head">
+            <span class="info-no">— 02</span>
+            <span class="info-mark">${icon("replay")}</span>
+          </header>
+          <h3>直播回放</h3>
+          <p class="info-desc">错过的直播，散场以后还能补。官方、镜像、网盘与 PT，按需自取。</p>
+          <div class="replay-list">
+            ${replayLinks.map((link) => `
+              <a class="replay-row" href="${link.href}" target="_blank" rel="noreferrer">
+                <span class="replay-tag ${link.official ? "is-official" : ""}">${link.tag}</span>
+                <span class="replay-name">${link.name}<small>${link.host}</small></span>
+                <span class="replay-go">${icon("arrow-up-right")}</span>
+              </a>
+            `).join("")}
+          </div>
+        </article>
+
+        <article class="info-card info-card-wechat reveal">
+          <header class="info-card-head">
+            <span class="info-no">— 03</span>
+            <span class="info-mark">${icon("wechat")}</span>
+          </header>
+          <h3>微信小程序</h3>
+          <p class="info-desc">在微信里搜「小德看电影」：开播提醒、电影打分、直播导航，都收在这一个小程序里。</p>
+          <a class="wechat-plate" href="https://mp.weixin.qq.com/s/6S0ql4DE29pIDWN4ZmH5KA" target="_blank" rel="noreferrer">
+            <span class="wechat-badge">微</span>
+            <span class="wechat-copy"><b>小德看电影</b><small>微信小程序 · 查看介绍</small></span>
+            ${icon("arrow-up-right")}
+          </a>
+        </article>
+
+        <article class="guide-card reveal">
+          <header class="guide-head">
+            <div class="guide-head-copy">
+              <span class="kicker no-line">MOBILE · 手机端听歌</span>
+              <h3 class="guide-title">飞牛音乐，把唱片架<em>装进口袋</em>。</h3>
+              <p class="guide-lead">除了网页，手机也能听。装好飞牛音乐，用下面的示例账号登录，三分钟就能进入私人音乐库。</p>
+            </div>
+            <div class="guide-platforms" aria-label="支持平台">
+              <span>iOS</span><span>ANDROID</span><small>NAS 账号登录</small>
+            </div>
+          </header>
+
+          <ol class="guide-steps">
+            <li class="guide-step">
+              <span class="guide-step-no">01</span>
+              <h4>下载 App</h4>
+              <p>打开 App Store 或各大安卓应用商店，搜索「飞牛音乐」并下载安装。</p>
+            </li>
+            <li class="guide-step">
+              <span class="guide-step-no">02</span>
+              <h4>打开 App</h4>
+              <p>首次打开会直接进入登录界面，在这里填写连接信息；同一局域网也可以点「发现局域网内服务器」。</p>
+            </li>
+            <li class="guide-step">
+              <span class="guide-step-no">03</span>
+              <h4>填写登录信息</h4>
+              <p>按下方示例填写 FN ID、用户名与密码，HTTPS 安全访问保持开启。</p>
+            </li>
+            <li class="guide-step">
+              <span class="guide-step-no">04</span>
+              <h4>点击「登录」</h4>
+              <p>登录成功后进入私人音乐库，收藏、歌单与最近播放都在里面。</p>
+            </li>
+          </ol>
+
+          <div class="guide-bottom">
+            <div class="login-ticket">
+              <div class="login-head"><span>LOGIN · 登录信息</span><i>示例账号</i></div>
+              <dl class="login-list">
+                <div class="login-row"><dt>FN ID</dt><dd class="login-value">daniel67373</dd></div>
+                <div class="login-row"><dt>用户名</dt><dd class="login-value">67373</dd></div>
+                <div class="login-row">
+                  <dt>密码</dt>
+                  <dd class="login-value is-pass">
+                    <span data-secret data-value="cyf67373" data-masked="false">cyf67373</span>
+                    <button class="login-eye" data-action="toggle-secret" aria-label="隐藏密码">${icon("eye-off")}</button>
+                  </dd>
+                </div>
+              </dl>
+              <p>HTTPS 安全访问请保持开启。示例账号仅供发友登录音乐库，请勿修改或转借。</p>
+              <ul class="login-tips">
+                <li>App Store 页面显示名称也是「飞牛音乐」。</li>
+                <li>目前仅手机 App 支持 NAS 账号登录，PC 端后续支持。</li>
+              </ul>
+            </div>
+            <figure class="guide-shot">
+              <a href="/assets/img/fn-music-login.jpg" target="_blank" rel="noreferrer" aria-label="查看飞牛音乐手机端登录教程大图">
+                <img src="/assets/img/fn-music-login.jpg" alt="飞牛音乐手机端登录教程：下载 App、打开 App、填写登录信息、点击登录四步图解" width="1400" height="787" loading="lazy">
+                <span class="guide-shot-tag">教程长图 · 点击看大图</span>
+              </a>
+              <figcaption>飞牛音乐手机端登录教程 · 四步图解</figcaption>
+            </figure>
+          </div>
+        </article>
+      </div>
+
+      <p class="info-hub-note">${icon("info")} 以上入口均为外部站点，链接内容由各站维护；请勿在公开群里透露个人信息。</p>
+    </section>
   `;
 }
 
