@@ -1,6 +1,6 @@
 /* Anonymous, local-first library. Everything stays in this browser unless shared. */
 
-import { uid } from "./utils.js";
+import { uid } from "./utils.js?v=20261106-1";
 
 const KEY = "cyf.radio.state.v1";
 const BACKUP_KEY = "cyf.radio.backup.v1";

@@ -1,18 +1,18 @@
 /* Offline shell only. Music and API responses always go to the network. */
 
-const VERSION = "cyf-radio-v1.2.0";
+const VERSION = "cyf-radio-v1.3.0";
 const SHELL = [
   "/",
   "/index.html",
-  "/assets/css/app.css",
-  "/assets/js/app.js",
-  "/assets/js/api.js",
-  "/assets/js/data.js",
-  "/assets/js/player.js",
-  "/assets/js/store.js",
-  "/assets/js/ui.js",
-  "/assets/js/utils.js",
-  "/assets/js/views.js",
+  "/assets/css/app.css?v=20261106-1",
+  "/assets/js/app.js?v=20261106-1",
+  "/assets/js/api.js?v=20261106-1",
+  "/assets/js/data.js?v=20261106-1",
+  "/assets/js/player.js?v=20261106-1",
+  "/assets/js/store.js?v=20261106-1",
+  "/assets/js/ui.js?v=20261106-1",
+  "/assets/js/utils.js?v=20261106-1",
+  "/assets/js/views.js?v=20261106-1",
   "/assets/img/favicon.svg",
   "/assets/img/cover-fallback.svg",
   "/assets/img/hero-portrait.jpg",

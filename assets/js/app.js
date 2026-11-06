@@ -1,9 +1,9 @@
 /* App bootstrap, router, actions. */
 
-import { api, downloadUrl, shareUrl } from "./api.js";
-import { getQueue, getSong, registerQueue, registerSongs } from "./data.js";
-import { Player } from "./player.js";
-import { Store } from "./store.js";
+import { api, downloadUrl, shareUrl } from "./api.js?v=20261106-1";
+import { getQueue, getSong, registerQueue, registerSongs } from "./data.js?v=20261106-1";
+import { Player } from "./player.js?v=20261106-1";
+import { Store } from "./store.js?v=20261106-1";
 import {
   closeModal,
   closeNowPanel,
@@ -18,7 +18,7 @@ import {
   showShareResult,
   showSongMenu,
   toast,
-} from "./ui.js";
+} from "./ui.js?v=20261106-1";
 import {
   aboutView,
   albumView,
@@ -32,7 +32,7 @@ import {
   searchView,
   sharedMissingView,
   sharedView,
-} from "./views.js";
+} from "./views.js?v=20261106-1";
 import {
   copyText,
   downloadBlob,
@@ -42,7 +42,7 @@ import {
   parseRoute,
   setMeta,
   triggerDownload,
-} from "./utils.js";
+} from "./utils.js?v=20261106-1";
 
 const store = new Store();
 const audio = document.getElementById("audio");
