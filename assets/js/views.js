@@ -1,6 +1,6 @@
 /* Server-data -> HTML. All views are pure string builders. */
 
-import { esc, formatCount, formatDuration, icon, thumb, timeAgo } from "./utils.js?v=20261106-1";
+import { esc, formatCount, formatDuration, icon, thumb, timeAgo } from "./utils.js?v=20261109-1";
 
 /* ------------------------------------------------------------------ */
 /* Shared pieces                                                      */
@@ -787,7 +787,7 @@ function infoHubView() {
   const replayLinks = [
     { tag: "官方", name: "官方回放", host: "67373.net/streams", href: "https://67373.net/streams/", official: true },
     { tag: "非官方", name: "茶话会", host: "chatcyf.com/teaparty", href: "https://www.chatcyf.com/teaparty/" },
-    { tag: "非官方", name: "镜像站", host: "陈一发儿.top", href: "http://xn--4gqy2fnwcsx7i.top/" },
+    { tag: "非官方", name: "镜像站", host: "陈一发儿.top", href: "http://xn--4gqy2fnwcsx7i.top/", guide: true },
     { tag: "网盘", name: "夸克网盘", host: "pan.quark.cn", href: "https://pan.quark.cn/s/dacb06e974c9" },
     { tag: "PT", name: "67373 PT", host: "67373pt.com", href: "https://www.67373pt.com/" },
   ];
@@ -839,9 +839,16 @@ function infoHubView() {
             <span class="info-mark">${icon("replay")}</span>
           </header>
           <h3>直播回放</h3>
-          <p class="info-desc">错过的直播，散场以后还能补。官方、镜像、网盘与 PT，按需自取。</p>
+          <p class="info-desc">错过的直播，散场以后还能补。镜像站可点「教程」，用 Emby 客户端看。</p>
           <div class="replay-list">
-            ${replayLinks.map((link) => `
+            ${replayLinks.map((link) => link.guide ? `
+              <div class="replay-row replay-row-emby">
+                <span class="replay-tag">${link.tag}</span>
+                <a class="replay-name" href="${link.href}" target="_blank" rel="noreferrer" aria-label="打开陈一发儿.top（新窗口）">${link.name}<small>${link.host}</small></a>
+                <button class="replay-guide-btn" type="button" data-action="open-emby-guide" aria-label="查看陈一发儿.top 的网易爆米花使用教程">教程</button>
+                <a class="replay-go" href="${link.href}" target="_blank" rel="noreferrer" aria-label="打开陈一发儿.top（新窗口）">${icon("arrow-up-right")}</a>
+              </div>
+            ` : `
               <a class="replay-row" href="${link.href}" target="_blank" rel="noreferrer">
                 <span class="replay-tag ${link.official ? "is-official" : ""}">${link.tag}</span>
                 <span class="replay-name">${link.name}<small>${link.host}</small></span>
@@ -933,6 +940,79 @@ function infoHubView() {
 
       <p class="info-hub-note">${icon("info")} 以上入口均为外部站点，链接内容由各站维护；请勿在公开群里透露个人信息。</p>
     </section>
+  `;
+}
+
+export function embyGuideBody() {
+  const params = `名称：67373emby
+协议：HTTPS
+地址：emby.zddyz.org
+端口：443
+用户名：cyf
+密码：留空
+HTTPS 证书校验：开启`;
+
+  return `
+    <div class="emby-guide">
+      <div class="emby-guide-main">
+        <p class="emby-lead">陈一发儿.top 的回放放在一台 Emby 媒体服务器上。网页之外，用网易爆米花连上它，手机、电视和电脑都能看。</p>
+        <ol class="emby-steps">
+          <li class="emby-step">
+            <span class="emby-step-no">01</span>
+            <div>
+              <h4>下载并安装网易爆米花</h4>
+              <p>打开下载页，按设备选择 iOS、Android、Android TV、Apple TV、macOS 或 Windows 版本；安卓也可以直接下载 APK。</p>
+              <a class="emby-inline-link" href="https://bmh.163.com/download/" target="_blank" rel="noreferrer">bmh.163.com/download ${icon("external")}</a>
+            </div>
+          </li>
+          <li class="emby-step">
+            <span class="emby-step-no">02</span>
+            <div>
+              <h4>添加 Emby 服务器</h4>
+              <p>打开客户端，在添加媒体服务器的入口选择「Emby」，不要选 SMB、WebDAV 之类的协议。</p>
+            </div>
+          </li>
+          <li class="emby-step">
+            <span class="emby-step-no">03</span>
+            <div>
+              <h4>填写连接参数</h4>
+              <p>按下面的参数填写地址、端口和用户名。密码留空，HTTPS 证书校验保持开启。</p>
+            </div>
+          </li>
+          <li class="emby-step">
+            <span class="emby-step-no">04</span>
+            <div>
+              <h4>点击「确认添加」</h4>
+              <p>连接成功后进入媒体库，在电影或视频列表里找直播回放即可。</p>
+            </div>
+          </li>
+        </ol>
+
+        <div class="emby-params">
+          <div class="emby-params-head">
+            <span>EMBY · 连接参数</span>
+            <button class="info-copy" type="button" data-action="copy-text" data-copy="${esc(params)}" data-copy-label="连接参数" aria-label="复制 Emby 连接参数">${icon("copy")}<span>复制全部</span></button>
+          </div>
+          <dl class="emby-param-list">
+            <div><dt>名称</dt><dd>67373emby</dd></div>
+            <div><dt>协议</dt><dd>HTTPS</dd></div>
+            <div><dt>地址</dt><dd>emby.zddyz.org</dd></div>
+            <div><dt>端口</dt><dd>443</dd></div>
+            <div><dt>用户名</dt><dd>cyf</dd></div>
+            <div><dt>密码</dt><dd>留空</dd></div>
+            <div><dt>证书校验</dt><dd>开启</dd></div>
+          </dl>
+          <p>名称可以随意改；密码选填，留空即可。连接地址是 emby.zddyz.org，不是网页版域名。</p>
+        </div>
+      </div>
+
+      <figure class="emby-shot">
+        <a href="/assets/img/emby-params.jpg" target="_blank" rel="noreferrer" aria-label="查看添加 Emby 参数大图">
+          <img src="/assets/img/emby-params.jpg" alt="网易爆米花添加 Emby 的参数示例：名称 67373emby、协议 HTTPS、地址 emby.zddyz.org、端口 443、用户名 cyf、密码留空、HTTPS 证书校验开启" width="621" height="1280" loading="lazy">
+        </a>
+        <figcaption>添加 Emby · 参数示例</figcaption>
+      </figure>
+    </div>
   `;
 }
 

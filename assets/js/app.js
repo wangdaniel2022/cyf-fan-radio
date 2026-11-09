@@ -1,9 +1,9 @@
 /* App bootstrap, router, actions. */
 
-import { api, downloadUrl, shareUrl } from "./api.js?v=20261106-1";
-import { getQueue, getSong, registerQueue, registerSongs } from "./data.js?v=20261106-1";
-import { Player } from "./player.js?v=20261106-1";
-import { Store } from "./store.js?v=20261106-1";
+import { api, downloadUrl, shareUrl } from "./api.js?v=20261109-1";
+import { getQueue, getSong, registerQueue, registerSongs } from "./data.js?v=20261109-1";
+import { Player } from "./player.js?v=20261109-1";
+import { Store } from "./store.js?v=20261109-1";
 import {
   closeModal,
   closeNowPanel,
@@ -18,12 +18,13 @@ import {
   showShareResult,
   showSongMenu,
   toast,
-} from "./ui.js?v=20261106-1";
+} from "./ui.js?v=20261109-1";
 import {
   aboutView,
   albumView,
   albumsView,
   communityView,
+  embyGuideBody,
   errorView,
   homeView,
   libraryView,
@@ -32,7 +33,7 @@ import {
   searchView,
   sharedMissingView,
   sharedView,
-} from "./views.js?v=20261106-1";
+} from "./views.js?v=20261109-1";
 import {
   copyText,
   downloadBlob,
@@ -42,7 +43,7 @@ import {
   parseRoute,
   setMeta,
   triggerDownload,
-} from "./utils.js?v=20261106-1";
+} from "./utils.js?v=20261109-1";
 
 const store = new Store();
 const audio = document.getElementById("audio");
@@ -546,6 +547,17 @@ async function handleAction(action, node, event) {
     case "open-search":
       openSearchDialog();
       break;
+    case "open-emby-guide":
+      openModal(modalShell({
+        title: "陈一发儿.top · 使用教程",
+        subtitle: "网易爆米花 / 添加 Emby 媒体服务器",
+        body: embyGuideBody(),
+        actions: `
+          <a class="btn btn-primary" href="https://bmh.163.com/download/" target="_blank" rel="noreferrer">${icon("download")} 下载网易爆米花</a>
+          <button class="btn btn-ghost" data-action="close-modal">看完了</button>
+        `,
+      }), { wide: true });
+      break;
     case "toggle-menu":
       toggleMobileMenu();
       break;
@@ -741,8 +753,9 @@ async function handleAction(action, node, event) {
       break;
     case "copy-text": {
       const text = node.dataset.copy || "";
+      const label = node.dataset.copyLabel || "";
       const ok = await copyText(text);
-      toast(ok ? `已复制「${text}」` : "复制失败，请手动选择");
+      toast(ok ? (label ? `已复制${label}` : `已复制「${text}」`) : "复制失败，请手动选择");
       break;
     }
     case "toggle-secret": {

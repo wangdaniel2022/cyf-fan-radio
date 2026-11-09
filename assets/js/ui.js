@@ -1,6 +1,6 @@
 /* Toast, modal, confirm and share surfaces. */
 
-import { copyText, esc, icon, thumb } from "./utils.js?v=20261106-1";
+import { copyText, esc, icon, thumb } from "./utils.js?v=20261109-1";
 
 let openModalResolve = null;
 let lastFocused = null;

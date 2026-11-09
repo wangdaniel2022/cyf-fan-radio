@@ -1,7 +1,7 @@
 /* Single audio element, persistent queue, media session. */
 
-import { streamUrl } from "./api.js?v=20261106-1";
-import { clamp, esc, formatDuration, icon, thumb } from "./utils.js?v=20261106-1";
+import { streamUrl } from "./api.js?v=20261109-1";
+import { clamp, esc, formatDuration, icon, thumb } from "./utils.js?v=20261109-1";
 
 const QUOTES = {
   "童话镇": "总有一条蜿蜒在童话镇里七彩的河。",
