@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "node scripts/dev-server.mjs",
-    "check": "node --check assets/js/app.js && node --check assets/js/views.js && node --check assets/js/player.js && node --check assets/js/store.js && node --check assets/js/ui.js && node --check assets/js/api.js && node --check assets/js/data.js && node --check assets/js/utils.js && node --check 'functions/api/[[catchall]].js'",
+    "check": "node --check assets/js/app.js && node --check assets/js/views.js && node --check assets/js/player.js && node --check assets/js/store.js && node --check assets/js/ui.js && node --check assets/js/api.js && node --check assets/js/data.js && node --check assets/js/utils.js && node --check 'functions/api/[[catchall]].js' && node --check 'workers/listeners/src/index.js'",
     "smoke": "node scripts/smoke.mjs"
   },
   "engines": {

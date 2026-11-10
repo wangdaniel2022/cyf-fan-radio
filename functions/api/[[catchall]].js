@@ -15,6 +15,8 @@ const API_VERSION = "1.16.1";
 const SYNC_TTL = 90 * 24 * 60 * 60;
 const MAX_TRACKS = 300;
 const MAX_BODY = 256 * 1024;
+const LISTENERS_API = "https://cyf-listeners.6436911879874.workers.dev";
+const LISTENERS_PROXY_HEADERS = { "x-cyf-listener-proxy": "radio-zddyz" };
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -33,6 +35,8 @@ export async function onRequest(context) {
     const path = url.pathname.replace(/^\/api\/?/, "");
 
     if (path === "health") return handleHealth(env);
+    if (path === "listeners") return handleListeners(env);
+    if (path === "listeners/heartbeat") return handleListenerHeartbeat(request, env);
     if (path === "home") return handleHome(request, env);
     if (path === "albums") return handleAlbums(request, env);
     if (path === "search") return handleSearch(request, env);
@@ -734,6 +738,53 @@ async function handleHealth(env) {
     version,
     site: "陈一发儿 · 发友留声机",
   });
+}
+
+function listenersBase(env) {
+  return String(env.LISTENERS_API || LISTENERS_API).replace(/\/+$/, "");
+}
+
+async function handleListeners(env) {
+  try {
+    const response = await fetch(`${listenersBase(env)}/count`, {
+      headers: LISTENERS_PROXY_HEADERS,
+      signal: AbortSignal.timeout(4000),
+    });
+    if (!response.ok) throw new Error(`listener api ${response.status}`);
+    const data = await response.json();
+    return json({
+      enabled: true,
+      current: Number(data.current) || 0,
+      month: Number(data.month) || 0,
+      monthKey: String(data.monthKey || ""),
+    }, 200, { "cache-control": "no-store" });
+  } catch {
+    return json({ enabled: false, current: 0, month: 0 }, 200, { "cache-control": "no-store" });
+  }
+}
+
+async function handleListenerHeartbeat(request, env) {
+  if (request.method !== "POST") return json({ ok: false }, 405);
+  const body = await request.text();
+  if (!body || body.length > 2000) return json({ ok: false }, 400);
+  try {
+    const response = await fetch(`${listenersBase(env)}/heartbeat`, {
+      method: "POST",
+      headers: { ...LISTENERS_PROXY_HEADERS, "content-type": "application/json" },
+      body,
+      signal: AbortSignal.timeout(4000),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.ok) return json({ ok: false }, 502, { "cache-control": "no-store" });
+    return json({
+      ok: true,
+      current: Number(data.current) || 0,
+      month: Number(data.month) || 0,
+      monthKey: String(data.monthKey || ""),
+    }, 200, { "cache-control": "no-store" });
+  } catch {
+    return json({ ok: false }, 200, { "cache-control": "no-store" });
+  }
 }
 
 function json(data, status = 200, headers = {}) {

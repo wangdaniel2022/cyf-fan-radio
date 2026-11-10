@@ -1598,6 +1598,58 @@ body.is-playing .vinyl { animation-play-state: running; }
    Player
    ------------------------------------------------------------ */
 
+.listener-badge {
+  position: fixed;
+  z-index: 290;
+  right: 30px;
+  bottom: calc(var(--player-h) + 18px);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(17, 16, 14, 0.82);
+  color: var(--cream-2);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  transition: border-color 0.25s, background 0.25s, transform 0.25s;
+}
+.listener-badge[hidden] { display: none; }
+.listener-badge:hover {
+  border-color: var(--line-strong);
+  background: rgba(28, 23, 19, 0.94);
+  transform: translateY(-1px);
+}
+.listener-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--orange-2);
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 0.14em;
+}
+.listener-live i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--orange-2);
+  animation: pulse 2.2s infinite;
+}
+.listener-stat { display: inline-flex; align-items: baseline; gap: 5px; white-space: nowrap; }
+.listener-stat b {
+  color: var(--cream);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.listener-stat small { color: var(--muted); font-size: 7.5px; letter-spacing: 0.06em; }
+.listener-divider { width: 1px; height: 14px; background: var(--line); }
+
 .player-dock {
   position: fixed;
   z-index: 300;
@@ -3425,6 +3477,13 @@ a.info-row:hover .info-row-go { color: var(--orange-2); transform: translate(2px
 
 @media (max-width: 820px) {
   .info-hub { padding: 52px 0 64px; }
+  .listener-badge {
+    right: 14px;
+    bottom: calc(var(--player-h) + var(--tabbar-h) + 14px);
+    padding: 7px 10px;
+    gap: 8px;
+  }
+  .listener-stat b { font-size: 13px; }
   .info-hub-head { flex-direction: column; gap: 24px; }
   .info-stamp { width: 92px; height: 92px; margin-top: 0; transform: rotate(4deg); }
   .info-stamp b { font-size: 26px; }
@@ -3447,6 +3506,8 @@ a.info-row:hover .info-row-go { color: var(--orange-2); transform: translate(2px
 
 @media (max-width: 600px) {
   .info-stamp { display: none; }
+  .listener-live { display: none; }
+  .listener-badge { padding: 7px 9px; gap: 7px; }
   .about-page-grid h1 { font-size: clamp(2.35rem, 10.5vw, 3rem); }
   .info-hub-copy .section-title { font-size: 2.3rem; }
   .info-card { padding: 20px 16px 16px; }

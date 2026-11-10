@@ -1,0 +1,9 @@
+name = "cyf-listeners"
+main = "src/index.js"
+compatibility_date = "2026-11-10"
+workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cyf-fan-radio-listeners"
+database_id = "b75701a5-ddfd-4589-b3ac-eda3c1078db9"

@@ -15,7 +15,7 @@
   <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/assets/img/favicon.svg">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="stylesheet" href="/assets/css/app.css?v=20261109-1">
+  <link rel="stylesheet" href="/assets/css/app.css?v=20261110-1">
 </head>
 <body>
   <a class="skip-link" href="#view">跳到主要内容</a>
@@ -146,6 +146,13 @@
     </div>
   </footer>
 
+  <button class="listener-badge" id="listener-badge" type="button" data-action="refresh-listeners" hidden aria-label="正在收听和本月收听人数，点击刷新" title="点击刷新收听人数">
+    <span class="listener-live"><i></i>LIVE</span>
+    <span class="listener-stat"><b id="listener-now">0</b><small>正在听</small></span>
+    <span class="listener-divider" aria-hidden="true"></span>
+    <span class="listener-stat"><b id="listener-month">0</b><small>本月收听</small></span>
+  </button>
+
   <aside class="player-dock" id="player-dock" aria-label="播放器">
     <audio id="audio" preload="metadata"></audio>
     <div class="player-progress" id="player-progress">
@@ -271,6 +278,6 @@
     </div>
   </template>
 
-  <script type="module" src="/assets/js/app.js?v=20261109-1"></script>
+  <script type="module" src="/assets/js/app.js?v=20261110-1"></script>
 </body>
 </html>

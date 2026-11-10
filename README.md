@@ -22,6 +22,7 @@
 - **歌单同步**：生成 6 位同步码，发友不用登录就能打开、试听并保存一份；支持版本冲突提示。
 - **发友广场**：最近分享的歌单会出现在广场，形成轻量的同好互动。
 - **相关信息**：开播通知、直播回放（含 陈一发儿.top 的网易爆米花 Emby 教程）、微信小程序与飞牛音乐手机端登录教程，都收在「关于」页。
+- **收听人数**：页面右下角显示当前正在收听与本月收听人数；匿名 session 计数，不上报 IP / UA。
 - **Cloudflare 免费部署**：静态页面 + Pages Functions，凭据只放服务端；KV 只存分享歌单。
 
 ## 关于 2024–2026 的直播歌曲集
@@ -40,7 +41,8 @@ Navidrome 里陈一发儿的曲库被拆成了两个 artist 条目：
   ├─ 静态页面（HTML / CSS / 原生 ES Modules，无构建步骤）
   └─ /api/*  ── Cloudflare Pages Functions ── Navidrome Subsonic API
                          │
-                         └─ Cloudflare KV（歌单同步，可选）
+                         ├─ Cloudflare KV（歌单同步，可选）
+                         └─ /api/listeners ── cyf-listeners Worker ── D1
 ```
 
 关键点：**Navidrome 用户名和密码永远不会进入浏览器**。前端只请求同源的 `/api/*`，由 Pages Functions 在服务端拼接 Subsonic 凭据、代理音频、封面和下载，并处理 KV 同步。
@@ -60,7 +62,8 @@ Navidrome 里陈一发儿的曲库被拆成了两个 artist 条目：
 │   │   ├── utils.js
 │   │   └── views.js          # 纯字符串视图
 │   └── img/                  # 头像、照片、OG、图标
-├── functions/api/[[catchall]].js   # Pages Functions：代理 + 同步
+├── functions/api/[[catchall]].js   # Pages Functions：代理 + 同步 + 收听人数转发
+├── workers/listeners/        # 独立 Worker + D1：匿名收听人数
 ├── scripts/dev-server.mjs    # 免 Wrangler 的本地开发服务器
 ├── scripts/smoke.mjs         # 端到端冒烟测试
 ├── _headers                  # CSP / 安全头 / 静态缓存
@@ -166,6 +169,17 @@ npx wrangler pages deploy . --project-name cyf-fan-radio
 | `PUT /api/sync/:code` | 编辑（Bearer token + 版本号） |
 | `DELETE /api/sync/:code` | 删除（Bearer token） |
 | `GET /api/community` | 最近公开分享的歌单 |
+| `GET /api/listeners` | 当前 / 本月收听人数（代理独立 Worker） |
+| `POST /api/listeners/heartbeat` | 匿名收听心跳 |
+
+## 收听人数统计
+
+右下角的「正在听 / 本月收听」来自独立的 `workers/listeners` Worker + D1，不依赖第三方统计：
+
+- 播放时每 60 秒发一次匿名心跳；只保存浏览器本地生成的随机 session id，不保存 IP、UA。
+- 3 分钟内有心跳算「正在听」；当月有过播放的 session 数算「本月收听」。
+- 浏览器只请求同源 `/api/listeners`，由 Pages Functions 转发到 Worker；Worker 只接受带内部请求头的调用。
+- 部署 Worker：先在 Cloudflare 创建 D1，把 id 写入 `workers/listeners/wrangler.toml`，再执行 `cd workers/listeners && npx wrangler deploy`。
 
 ## 安全与隐私
 
@@ -175,6 +189,7 @@ npx wrangler pages deploy . --project-name cyf-fan-radio
 - 编辑 token 只返回一次，KV 中保存 SHA-256 哈希；没有 token 不能改别人的歌单。
 - 歌单读取是公开的（6 位码本身就是访问凭证），请不要在共享歌单里放私人信息。
 - 站点没有登录系统，不收集邮箱、手机号、位置；本地存储只在本机。
+- 收听人数统计只使用浏览器本地生成的随机 session id，不保存 IP、UA 或具体歌曲记录；D1 只存「某 session 在某月听过」和最后心跳时间。
 - 建议给 Navidrome 使用单独的只读账号，并定期更换密码。
 - 如果账号凭据曾经出现在聊天、截图或提交历史里，请立即更换；本仓库不包含 `.dev.vars`。
 

@@ -1,9 +1,9 @@
 /* App bootstrap, router, actions. */
 
-import { api, downloadUrl, shareUrl } from "./api.js?v=20261109-1";
-import { getQueue, getSong, registerQueue, registerSongs } from "./data.js?v=20261109-1";
-import { Player } from "./player.js?v=20261109-1";
-import { Store } from "./store.js?v=20261109-1";
+import { api, downloadUrl, shareUrl } from "./api.js?v=20261110-1";
+import { getQueue, getSong, registerQueue, registerSongs } from "./data.js?v=20261110-1";
+import { Player } from "./player.js?v=20261110-1";
+import { Store } from "./store.js?v=20261110-1";
 import {
   closeModal,
   closeNowPanel,
@@ -18,7 +18,7 @@ import {
   showShareResult,
   showSongMenu,
   toast,
-} from "./ui.js?v=20261109-1";
+} from "./ui.js?v=20261110-1";
 import {
   aboutView,
   albumView,
@@ -33,7 +33,7 @@ import {
   searchView,
   sharedMissingView,
   sharedView,
-} from "./views.js?v=20261109-1";
+} from "./views.js?v=20261110-1";
 import {
   copyText,
   downloadBlob,
@@ -43,7 +43,7 @@ import {
   parseRoute,
   setMeta,
   triggerDownload,
-} from "./utils.js?v=20261109-1";
+} from "./utils.js?v=20261110-1";
 
 const store = new Store();
 const audio = document.getElementById("audio");
@@ -78,6 +78,7 @@ bindGlobalEvents();
 updateLibraryCount();
 updateHeaderState();
 setGitHubLink();
+initListeners();
 
 loadInitial();
 
@@ -542,10 +543,131 @@ function bindGlobalEvents() {
   maybeRegisterServiceWorker();
 }
 
+/* ------------------------------------------------------------------ */
+/* Anonymous listener count                                           */
+/* ------------------------------------------------------------------ */
+
+const LISTENER_SESSION_KEY = "cyf-listener-session";
+let listenerHeartbeatTimer = 0;
+let listenerIsPlaying = false;
+
+function listenerSessionId() {
+  try {
+    let id = localStorage.getItem(LISTENER_SESSION_KEY);
+    if (!id || !/^[A-Za-z0-9_-]{8,64}$/.test(id)) {
+      id = typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `s_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+      localStorage.setItem(LISTENER_SESSION_KEY, id);
+    }
+    return id;
+  } catch {
+    return `s_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+  }
+}
+
+function renderListenerCounts(data) {
+  const badge = document.getElementById("listener-badge");
+  if (!badge) return;
+  const current = Math.max(0, Number(data?.current) || 0);
+  const month = Math.max(0, Number(data?.month) || 0);
+  const nowNode = document.getElementById("listener-now");
+  const monthNode = document.getElementById("listener-month");
+  if (nowNode) nowNode.textContent = current.toLocaleString("zh-CN");
+  if (monthNode) monthNode.textContent = month.toLocaleString("zh-CN");
+  badge.hidden = false;
+  badge.setAttribute("aria-label", `正在收听 ${current.toLocaleString("zh-CN")} 人，本月收听 ${month.toLocaleString("zh-CN")} 人，点击刷新`);
+}
+
+async function refreshListeners() {
+  try {
+    const response = await fetch("/api/listeners", { cache: "no-store" });
+    if (!response.ok) return;
+    const data = await response.json();
+    if (data?.enabled === false) return;
+    renderListenerCounts(data);
+  } catch {
+    /* 计数服务不可用时保持安静 */
+  }
+}
+
+async function sendListenerHeartbeat(playing) {
+  try {
+    const response = await fetch("/api/listeners/heartbeat", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ id: listenerSessionId(), playing }),
+      keepalive: true,
+    });
+    if (!response.ok) return;
+    const data = await response.json();
+    if (data?.ok) renderListenerCounts(data);
+  } catch {
+    /* 忽略网络失败，下一次心跳会重试 */
+  }
+}
+
+function initListeners() {
+  const badge = document.getElementById("listener-badge");
+  if (!badge || !audio) return;
+
+  const start = () => {
+    if (listenerIsPlaying) return;
+    listenerIsPlaying = true;
+    sendListenerHeartbeat(true);
+    if (!listenerHeartbeatTimer) {
+      listenerHeartbeatTimer = window.setInterval(() => {
+        if (listenerIsPlaying) sendListenerHeartbeat(true);
+      }, 60000);
+    }
+  };
+
+  const stop = () => {
+    if (!listenerIsPlaying) return;
+    listenerIsPlaying = false;
+    if (listenerHeartbeatTimer) {
+      window.clearInterval(listenerHeartbeatTimer);
+      listenerHeartbeatTimer = 0;
+    }
+    sendListenerHeartbeat(false);
+  };
+
+  audio.addEventListener("play", start);
+  audio.addEventListener("pause", stop);
+  audio.addEventListener("ended", stop);
+
+  window.addEventListener("pagehide", () => {
+    if (!listenerIsPlaying) return;
+    listenerIsPlaying = false;
+    if (listenerHeartbeatTimer) {
+      window.clearInterval(listenerHeartbeatTimer);
+      listenerHeartbeatTimer = 0;
+    }
+    try {
+      navigator.sendBeacon(
+        "/api/listeners/heartbeat",
+        new Blob([JSON.stringify({ id: listenerSessionId(), playing: false })], { type: "application/json" })
+      );
+    } catch {
+      /* ignore */
+    }
+  });
+
+  window.setInterval(() => {
+    if (!listenerIsPlaying) refreshListeners();
+  }, 60000);
+
+  refreshListeners();
+  if (!audio.paused) start();
+}
+
 async function handleAction(action, node, event) {
   switch (action) {
     case "open-search":
       openSearchDialog();
+      break;
+    case "refresh-listeners":
+      refreshListeners();
       break;
     case "open-emby-guide":
       openModal(modalShell({
